@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PriceCalculator
 {
@@ -10,20 +6,18 @@ namespace PriceCalculator
     {
         public string Name { get; }
         public int Upc { get; }
-        public Amount Price { get;  }
-        public Tax Tax { get;  }
-        public Product(string name,int upc,Amount amount,Tax tax)
+        public Amount Price { get; }
+       
+        public Product(string name, int upc, Amount amount)
         {
             this.Name = name;
             this.Upc = upc;
             this.Price = amount;
-            this.Tax = tax;
+       
         }
-        public string CalculateTax()
-        {          
-          var  PriceAfterTaxes = new Amount(this.Price.Value + (this.Price.Value * this.Tax.TaxRate));
-            return $"Product price reported as {this.Price} before tax and {PriceAfterTaxes} after {this.Tax} tax.";
-        }
+      
+       
+
         public override string ToString() =>
             $"Product Name {this.Name} UPC {this.Upc} Price {this.Price}";
     }
@@ -35,7 +29,7 @@ namespace PriceCalculator
         public Amount(double value)
         {
             if (value < 0) throw new ArgumentException("Amount can not be less than 0");
-            this.Value =  Math.Round(value, 2, MidpointRounding.AwayFromZero);
+            this.Value = Math.Round(value, 2, MidpointRounding.AwayFromZero);
             this.Currency = new Currency("$", "USD");
         }
 
@@ -45,9 +39,9 @@ namespace PriceCalculator
     }
     public class Currency
     {
-        public string CurrencySymbol { get;  }
+        public string CurrencySymbol { get; }
         public string CurrencyCode { get; }
-        public Currency(string CurrencySymbol,string CurrencyCode)
+        public Currency(string CurrencySymbol, string CurrencyCode)
         {
             this.CurrencyCode = CurrencyCode;
             this.CurrencySymbol = CurrencySymbol;
@@ -59,7 +53,7 @@ namespace PriceCalculator
         public double TaxRate { get; }
         public Tax(int percent)
         {
-            if(percent<0 || percent>100)
+            if (percent < 0 || percent > 100)
                 throw new ArgumentOutOfRangeException(
                     nameof(percent),
                     $"{nameof(Tax)} percentage should be < 0 and > 100");
@@ -74,7 +68,7 @@ namespace PriceCalculator
     public class Discount
     {
         private readonly int Percent;
-
+        public double DiscountRate { get; }
         public Discount(int percent)
         {
             if (percent < 0 || percent > 100)
@@ -83,9 +77,10 @@ namespace PriceCalculator
                     $"{nameof(Tax)} percentage should be in range [0..100]");
 
             this.Percent = percent;
+            this.DiscountRate = (double)Percent / 100;
         }
 
-        public override string ToString() => $"{Percent}";
+        public override string ToString() => $"{Percent}%";
 
     }
 }
