@@ -1,6 +1,6 @@
 ﻿namespace PriceCalculator
 {
-    class DiscountCalculate : ICalculate
+    class DiscountCalculate : IDiscountCalculate
     {
         private readonly Product product;
         public Discount Discount { get; }
@@ -11,12 +11,7 @@
             this.product = product ?? throw new System.ArgumentNullException(nameof(product));
             Discount = discount ?? throw new System.ArgumentNullException(nameof(discount));
         }
-
-        
-
-        
-
-        public ICalculate Calculate()
+        public IDiscountCalculate WithDiscountCalculate()
         {
             this.Amount = new Amount(this.product.Price.Value * this.Discount.DiscountRate);
             return this;

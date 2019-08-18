@@ -1,22 +1,53 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PriceCalculator
 {
-    class Product
+    public interface IProduct
+    {
+        string Name { get; }
+        int Upc { get; }
+        Amount Price { get; }
+        Amount TotalTax { get; set; }
+        Amount TotalDiscount { get; set; }
+        Amount AddionalDiscount { get; set; } 
+
+    }
+    public static class EnumarableExtention
+    {
+        public static void Each<T>(
+                                    this IEnumerable<T> source,
+                                    Action<T> action)
+        {
+            foreach (T element in source)
+                action(element);
+        }
+    }
+    public class UpcDiscounts
+    {
+        public int Upc { get; set; }
+        public Discount Discount { get; set; }
+    }
+    
+    class Product : IProduct
     {
         public string Name { get; }
         public int Upc { get; }
         public Amount Price { get; }
-       
+        public Amount TotalTax { get; set; }
+        public Amount TotalDiscount { get; set; }
+        public Amount AddionalDiscount { get; set; } = new Amount(0);
+
         public Product(string name, int upc, Amount amount)
         {
             this.Name = name;
             this.Upc = upc;
             this.Price = amount;
-       
+
         }
-      
-       
+
+
 
         public override string ToString() =>
             $"Product Name {this.Name} UPC {this.Upc} Price {this.Price}";
