@@ -20,7 +20,13 @@ namespace PriceCalculator
         public Products CalculateTax(Tax tax) =>
            new Products(this.ContainedProducts.Select(s =>
            {
-               s.TotalTax = new Amount(s.Price.Value * tax.TaxRate);
+               var price = s.Price;
+               if(this.upcDiscounts.Any(ss=>ss.Upc==s.Upc && ss.CanTaxCalculateAfterDiscount))
+               {
+                   price = new Amount(s.Price.Value - s.AddionalDiscount.Value);
+               }
+               s.TotalTax = new Amount(price.Value * tax.TaxRate);
+               s.FinalPrice = price;
                return s;
            }));
         public Products WithTax(Tax tax)
@@ -41,7 +47,7 @@ namespace PriceCalculator
         public Products CalculateDiscount() =>
            new Products(this.ContainedProducts.Select(s =>
            {
-               s.TotalDiscount = new Amount(s.Price.Value * this.Discount.DiscountRate);
+               s.TotalDiscount = new Amount(s.FinalPrice.Value * this.Discount.DiscountRate);               
                return s;
            }));
         private void CalculateAdditionalDiscount() =>
@@ -49,22 +55,20 @@ namespace PriceCalculator
             {
                 var specialProduct = this.ContainedProducts.FirstOrDefault(product => product.Upc == s.Upc);
                 specialProduct.AddionalDiscount = new Amount(specialProduct.Price.Value * s.Discount.DiscountRate);
-
             });
 
 
         public void DisplayResult()
         {
-
-            this.CalculateTax(this.Tax);
-            this.CalculateDiscount();
             this.CalculateAdditionalDiscount();
+            this.CalculateTax(this.Tax);
+            this.CalculateDiscount();            
             this.ContainedProducts.Each(s =>
             {
                 Console.WriteLine($"Product = {s.Name} UPC = {s.Upc}");
                 Console.WriteLine($"Tax = {this.Tax}, discount = {this.Discount}");
                 Console.WriteLine($"Tax amount ={s.TotalTax}; Discount amount = {s.TotalDiscount} UPC discount = {s.AddionalDiscount}");
-                Console.WriteLine($"Price before = {s.Price} price after = {new Amount(s.Price.Value + s.TotalTax.Value - s.TotalDiscount.Value - s.AddionalDiscount.Value)}");
+                Console.WriteLine($"Price before = {s.Price} price after = { new Amount(s.Price.Value + s.TotalTax.Value-s.TotalDiscount.Value-s.AddionalDiscount.Value)}");
                 Console.WriteLine($"Total Discount = {new Amount(s.TotalDiscount.Value + s.AddionalDiscount.Value)}");
                 Console.WriteLine();
             });

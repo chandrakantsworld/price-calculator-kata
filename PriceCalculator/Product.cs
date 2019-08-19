@@ -10,6 +10,7 @@ namespace PriceCalculator
         int Upc { get; }
         Amount Price { get; }
         Amount TotalTax { get; set; }
+        Amount FinalPrice { get; set; }
         Amount TotalDiscount { get; set; }
         Amount AddionalDiscount { get; set; } 
 
@@ -26,6 +27,7 @@ namespace PriceCalculator
     }
     public class UpcDiscounts
     {
+        public bool CanTaxCalculateAfterDiscount { get; set; } = false;
         public int Upc { get; set; }
         public Discount Discount { get; set; }
     }
@@ -38,6 +40,7 @@ namespace PriceCalculator
         public Amount TotalTax { get; set; }
         public Amount TotalDiscount { get; set; }
         public Amount AddionalDiscount { get; set; } = new Amount(0);
+        public Amount FinalPrice { get; set; } = new Amount(0);
 
         public Product(string name, int upc, Amount amount)
         {

@@ -48,7 +48,17 @@ namespace PriceCalculator
                     .WithDiscount(new Discount(15))
                     .WithAddionalDiscount(new List<UpcDiscounts>() { new UpcDiscounts() { Upc = 789, Discount = new Discount(7) } });
             products.DisplayResult();
-            
+
+            Console.WriteLine("----------Precedance--------");
+            products = new Products(new[]
+            {
+                new Product("The Little Prince", 12345, new Amount(20.25)) { },
+            });
+            products.WithTax(new Tax(20))
+                    .WithDiscount(new Discount(15))
+                    .WithAddionalDiscount(new List<UpcDiscounts>() { new UpcDiscounts() { Upc = 12345, Discount = new Discount(7),CanTaxCalculateAfterDiscount=true } });
+            products.DisplayResult();
+
             // The code provided will print ‘Hello World’ to the console.
             // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
             //  Console.WriteLine("Hello World!");
