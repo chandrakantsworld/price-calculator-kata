@@ -4,3 +4,6 @@ PriceCalculator/packages
 
 PriceCalculator/obj
 PriceCalculator/bin
+packages
+PriceCalculatorTests/obj
+PriceCalculatorTests/bin

@@ -17,7 +17,7 @@ namespace PriceCalculator
         {
             ContainedProducts = products.ToList();
         }
-        public Products CalculateTax(Tax tax) =>
+        private void CalculateTax(Tax tax) =>
            new Products(this.ContainedProducts.Select(s =>
            {
                var price = s.Price;
@@ -53,10 +53,14 @@ namespace PriceCalculator
         private void CalculateAdditionalDiscount() =>
             this.upcDiscounts.Each(s =>
             {
-                var specialProduct = this.ContainedProducts.FirstOrDefault(product => product.Upc == s.Upc);
+                IProduct specialProduct = FindAddionalDiscountProduct(s);
                 specialProduct.AddionalDiscount = new Amount(specialProduct.Price.Value * s.Discount.DiscountRate);
             });
 
+        private IProduct FindAddionalDiscountProduct(UpcDiscounts s)
+        {
+            return this.ContainedProducts.FirstOrDefault(product => product.Upc == s.Upc) ?? new Product("", 0, new Amount(0));
+        }
 
         public void DisplayResult()
         {
@@ -65,6 +69,7 @@ namespace PriceCalculator
             this.CalculateDiscount();            
             this.ContainedProducts.Each(s =>
             {
+                s.FinalPrice = new Amount(s.Price.Value + s.TotalTax.Value - s.TotalDiscount.Value - s.AddionalDiscount.Value);
                 Console.WriteLine($"Product = {s.Name} UPC = {s.Upc}");
                 Console.WriteLine($"Tax = {this.Tax}, discount = {this.Discount}");
                 Console.WriteLine($"Tax amount ={s.TotalTax}; Discount amount = {s.TotalDiscount} UPC discount = {s.AddionalDiscount}");
