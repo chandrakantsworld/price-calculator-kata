@@ -12,6 +12,8 @@ namespace PriceCalculator
         public Amount TotalDiscount { get; set; }
         public Amount AddionalDiscount { get; set; } = new Amount(0);
         public Amount FinalPrice { get; set; } = new Amount(0);
+        public Tax Tax { get; set; }
+        public Discount Discount { get; set; }
 
         public Product(string name, int upc, Amount amount)
         {

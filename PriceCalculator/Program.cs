@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PriceCalculator
 {
@@ -23,7 +24,7 @@ namespace PriceCalculator
             });
             
             products.WithTax(new Tax(20))
-                    .WithDiscount(new Discount(15));
+                    .WithDiscount(new Discount(15),Enumerable.Empty<UpcDiscounts>());
             products.DisplayResult();
 
             Console.WriteLine("----------Selective--------");
@@ -34,8 +35,7 @@ namespace PriceCalculator
                 new Product("The Little Prince1", 123, new Amount(20.25)) { }
             });
             products.WithTax(new Tax(20))
-                    .WithDiscount(new Discount(15))
-                    .WithAddionalDiscount(upcDiscounts);
+                    .WithDiscount(new Discount(15), upcDiscounts);
             products.DisplayResult();
 
             Console.WriteLine("----------Selective Case 2--------");
@@ -45,8 +45,7 @@ namespace PriceCalculator
                 new Product("The Little Prince1", 789, new Amount(20.25)) { }
             });
             products.WithTax(new Tax(21))
-                    .WithDiscount(new Discount(15))
-                    .WithAddionalDiscount(new List<UpcDiscounts>() { new UpcDiscounts() { Upc = 789, Discount = new Discount(7) } });
+                    .WithDiscount(new Discount(15), new List<UpcDiscounts>() { new UpcDiscounts() { Upc = 789, Discount = new Discount(7) } });
             products.DisplayResult();
 
             Console.WriteLine("----------Precedance--------");
@@ -55,8 +54,8 @@ namespace PriceCalculator
                 new Product("The Little Prince", 12345, new Amount(20.25)) { },
             });
             products.WithTax(new Tax(20))
-                    .WithDiscount(new Discount(15))
-                    .WithAddionalDiscount(new List<UpcDiscounts>() { new UpcDiscounts() { Upc = 12345, Discount = new Discount(7),CanTaxCalculateAfterDiscount=true } });
+                    .WithDiscount(new Discount(15), new List<UpcDiscounts>() { new UpcDiscounts() { Upc = 12345, Discount = new Discount(7), CanTaxCalculateAfterDiscount = true } })
+                    ;
             products.DisplayResult();
 
             // The code provided will print ‘Hello World’ to the console.

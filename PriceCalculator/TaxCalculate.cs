@@ -1,24 +1,30 @@
-﻿namespace PriceCalculator
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace PriceCalculator
 {
     class TaxCalculate : ITaxCalculate
     {
-        public Product product { get; }
+        
         public Tax tax { get; }
 
-        public Amount Amount  { get; set; }
+        public Amount Amount { get; set; }
 
-        public TaxCalculate(Product product, Tax tax)
-        {
-            this.product = product ?? throw new System.ArgumentNullException(nameof(product));
+        public TaxCalculate(Tax tax)        {
+
             this.tax = tax ?? throw new System.ArgumentNullException(nameof(tax));
         }
-        public ITaxCalculate WithTaxCalculate() {
-
-          this.Amount = new Amount(this.product.Price.Value * this.tax.TaxRate);
-
-            return this;
-        }
+        
         public override string ToString() =>
             $"Tax = {this.tax}";
+
+        public void CalculateTax(IProduct product,Func<IProduct,Amount> additonaldiscount)
+        {
+            var price = new Amount( product.Price.Value - additonaldiscount(product).Value);            
+            product.TotalTax = new Amount(price.Value * tax.TaxRate);
+            product.Tax = this.tax;
+            product.FinalPrice = price;
+        }
     }
 }

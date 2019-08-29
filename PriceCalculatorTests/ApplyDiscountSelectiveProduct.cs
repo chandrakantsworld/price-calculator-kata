@@ -26,8 +26,7 @@ namespace PriceCalculatorTests
             //Arrange
             Products products = new Products(new[] { product });
             products.WithTax(new Tax(tax))
-                .WithDiscount(new Discount(discount))
-                .WithAddionalDiscount(upcDiscounts);
+                .WithDiscount(new Discount(discount), upcDiscounts);
 
             //Act
             products.DisplayResult();

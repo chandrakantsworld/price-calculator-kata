@@ -1,81 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PriceCalculator
 {
     public class Products
     {
-        Tax Tax { get; set; }
-        IEnumerable<UpcDiscounts> upcDiscounts = Enumerable.Empty<UpcDiscounts>();
+        private Tax Tax { get; set; }
         Discount Discount { get; set; } = new Discount(0);
         public IEnumerable<IProduct> ContainedProducts { get; }
+        public IEnumerable<UpcDiscounts> UpcDiscounts { get; set; } = Enumerable.Empty<UpcDiscounts>();
 
+        private ITaxCalculate taxCalculate;
+        private ICalculateDiscount calculateDiscount;
+        private readonly IResult result;
         public Products(IEnumerable<IProduct> products)
         {
             ContainedProducts = products.ToList();
+            this.calculateDiscount =  new DiscountCalculate(new Discount(0)
+            , Enumerable.Empty<UpcDiscounts>());
+            result = new DisplayConsole();
         }
-        private void CalculateTax(Tax tax) =>
-           new Products(this.ContainedProducts.Select(s =>
-           {
-               var price = s.Price;
-               if(this.upcDiscounts.Any(ss=>ss.Upc==s.Upc && ss.CanTaxCalculateAfterDiscount))
-               {
-                   price = new Amount(s.Price.Value - s.AddionalDiscount.Value);
-               }
-               s.TotalTax = new Amount(price.Value * tax.TaxRate);
-               s.FinalPrice = price;
-               return s;
-           }));
+
         public Products WithTax(Tax tax)
         {
             this.Tax = tax;
+            this.taxCalculate = new TaxCalculate(tax);
             return this;
         }
-        public Products WithDiscount(Discount discount)
+        public Products WithDiscount(Discount discount, IEnumerable<UpcDiscounts> upcDiscounts = null)
         {
             this.Discount = discount;
+            this.UpcDiscounts = upcDiscounts ?? Enumerable.Empty<UpcDiscounts>();
+            this.calculateDiscount = new DiscountCalculate(discount, this.UpcDiscounts);
             return this;
         }
-        public Products WithAddionalDiscount(IEnumerable<UpcDiscounts> upcDiscounts)
-        {
-            this.upcDiscounts = upcDiscounts ?? Enumerable.Empty<UpcDiscounts>();
-            return this;
-        }
-        public Products CalculateDiscount() =>
-           new Products(this.ContainedProducts.Select(s =>
-           {
-               s.TotalDiscount = new Amount(s.FinalPrice.Value * this.Discount.DiscountRate);               
-               return s;
-           }));
-        private void CalculateAdditionalDiscount() =>
-            this.upcDiscounts.Each(s =>
-            {
-                IProduct specialProduct = FindAddionalDiscountProduct(s);
-                specialProduct.AddionalDiscount = new Amount(specialProduct.Price.Value * s.Discount.DiscountRate);
-            });
 
-        private IProduct FindAddionalDiscountProduct(UpcDiscounts s)
-        {
-            return this.ContainedProducts.FirstOrDefault(product => product.Upc == s.Upc) ?? new Product("", 0, new Amount(0));
-        }
+
 
         public void DisplayResult()
         {
-            this.CalculateAdditionalDiscount();
-            this.CalculateTax(this.Tax);
-            this.CalculateDiscount();            
+
             this.ContainedProducts.Each(s =>
             {
+                taxCalculate.CalculateTax(s, this.calculateDiscount.CalculateAddionalDiscount);
+                this.calculateDiscount?.Calculate(s);
                 s.FinalPrice = new Amount(s.Price.Value + s.TotalTax.Value - s.TotalDiscount.Value - s.AddionalDiscount.Value);
-                Console.WriteLine($"Product = {s.Name} UPC = {s.Upc}");
-                Console.WriteLine($"Tax = {this.Tax}, discount = {this.Discount}");
-                Console.WriteLine($"Tax amount ={s.TotalTax}; Discount amount = {s.TotalDiscount} UPC discount = {s.AddionalDiscount}");
-                Console.WriteLine($"Price before = {s.Price} price after = { new Amount(s.Price.Value + s.TotalTax.Value-s.TotalDiscount.Value-s.AddionalDiscount.Value)}");
-                Console.WriteLine($"Total Discount = {new Amount(s.TotalDiscount.Value + s.AddionalDiscount.Value)}");
-                Console.WriteLine();
+                result.Display(s);
             });
         }
     }

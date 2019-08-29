@@ -1,6 +1,12 @@
-﻿namespace PriceCalculator
+﻿using System;
+using System.Collections.Generic;
+
+namespace PriceCalculator
 {
-    internal interface ITaxCalculate
+    interface ITaxCalculate
     {
+        void CalculateTax(IProduct product, Func<IProduct, Amount> additonaldiscount);
     }
+
+   
 }

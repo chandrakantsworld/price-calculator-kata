@@ -1,7 +1,9 @@
 ﻿namespace PriceCalculator
 {
-    internal interface IDiscountCalculate
+    interface ICalculateDiscount
     {
+        void Calculate(IProduct product);
+        Amount CalculateAddionalDiscount(IProduct product);
     }
-    
+
 }

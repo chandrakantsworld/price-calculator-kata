@@ -46,11 +46,12 @@
     <Compile Include="Currency.cs" />
     <Compile Include="Discount.cs" />
     <Compile Include="DiscountCalculate.cs" />
+    <Compile Include="DisplayConsole.cs" />
     <Compile Include="EnumarableExtention.cs" />
     <Compile Include="IDiscountCalculate.cs" />
     <Compile Include="IProduct.cs" />
+    <Compile Include="IResult.cs" />
     <Compile Include="ITaxCalculate.cs" />
-    <Compile Include="PriceCalculator.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="Products.cs" />
     <Compile Include="Program.cs" />

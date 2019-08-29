@@ -1,22 +1,52 @@
-﻿namespace PriceCalculator
-{
-    class DiscountCalculate : IDiscountCalculate
-    {
-        private readonly Product product;
-        public Discount Discount { get; }
-        public Amount Amount { get ; set ; }
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-        public DiscountCalculate(Product product, Discount discount)
+namespace PriceCalculator
+{
+    class DiscountCalculate : ICalculateDiscount
+    {
+        private readonly Discount discount;
+        private readonly IEnumerable<UpcDiscounts> upcDiscounts;
+
+        public DiscountCalculate(Discount discount, IEnumerable<UpcDiscounts> upcDiscounts)
         {
-            this.product = product ?? throw new System.ArgumentNullException(nameof(product));
-            Discount = discount ?? throw new System.ArgumentNullException(nameof(discount));
+            
+            this.discount = discount;
+            this.upcDiscounts = upcDiscounts;
+            
         }
-        public IDiscountCalculate WithDiscountCalculate()
+
+        
+
+        public void Calculate(IProduct product)
         {
-            this.Amount = new Amount(this.product.Price.Value * this.Discount.DiscountRate);
-            return this;
+            CalculateAddDiscount(product);
+            product.Discount = this.discount;
+            product.TotalDiscount = new Amount(product.FinalPrice.Value * this.discount.DiscountRate);
+            
+        }
+
+        private void CalculateAddDiscount(IProduct product)
+        {
+            product.AddionalDiscount = new Amount(product.Price.Value * FindAddionalDiscountProduct(product).Discount.DiscountRate);
+        }
+
+        private UpcDiscounts FindAddionalDiscountProduct(IProduct s)
+        {
+            return this.upcDiscounts.FirstOrDefault(product => product.Upc == s.Upc) ?? new UpcDiscounts();
         }
         public override string ToString() =>
-            $"Discount {this.Discount}";
+            $"Discount {this.discount}";
+
+        public Amount CalculateAddionalDiscount(IProduct product)
+        {
+            var specialProduct = FindAddionalDiscountProduct(product);
+            
+            if (specialProduct.CanTaxCalculateAfterDiscount && specialProduct.Discount.DiscountRate > 0)
+                return new Amount(product.Price.Value * specialProduct.Discount.DiscountRate);
+            return new Amount(0);
+            
+        }
     }
 }
