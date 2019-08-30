@@ -48,7 +48,13 @@
     <Compile Include="DiscountCalculate.cs" />
     <Compile Include="DisplayConsole.cs" />
     <Compile Include="EnumarableExtention.cs" />
+    <Compile Include="Expense.cs" />
+    <Compile Include="ExpenseCalculator.cs" />
+    <Compile Include="Expenses.cs" />
+    <Compile Include="ExpenseType.cs" />
+    <Compile Include="ICalculateExpense.cs" />
     <Compile Include="IDiscountCalculate.cs" />
+    <Compile Include="IExpense.cs" />
     <Compile Include="IProduct.cs" />
     <Compile Include="IResult.cs" />
     <Compile Include="ITaxCalculate.cs" />

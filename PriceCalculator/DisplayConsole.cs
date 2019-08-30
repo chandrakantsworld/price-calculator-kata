@@ -4,13 +4,17 @@ namespace PriceCalculator
 {
     public class DisplayConsole : IResult
     {
-        public void Display(IProduct s)
+        public void Display(IProduct product)
         {
-            Console.WriteLine($"Product = {s.Name} UPC = {s.Upc}");
-            Console.WriteLine($"Tax = {s.Tax}, discount = {s.Discount}");
-            Console.WriteLine($"Tax amount ={s.TotalTax}; Discount amount = {s.TotalDiscount} UPC discount = {s.AddionalDiscount}");
-            Console.WriteLine($"Price before = {s.Price} price after = { new Amount(s.Price.Value + s.TotalTax.Value - s.TotalDiscount.Value - s.AddionalDiscount.Value)}");
-            Console.WriteLine($"Total Discount = {new Amount(s.TotalDiscount.Value + s.AddionalDiscount.Value)}");
+            Console.WriteLine($"Product = {product.Name} UPC = {product.Upc}");
+            Console.WriteLine($"Cost = {product.Price} ");
+            Console.WriteLine($"Tax = {product.TotalTax}");
+            if (product.TotalDiscount.Value>0)
+            {
+                Console.WriteLine($"Discounts  = {product.TotalDiscount}");
+            }
+            product.Expenses.DisplayResult();           
+            Console.WriteLine($"Total = { product.FinalPrice}");            
             Console.WriteLine();
         }
     }

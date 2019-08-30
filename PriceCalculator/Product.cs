@@ -14,13 +14,14 @@ namespace PriceCalculator
         public Amount FinalPrice { get; set; } = new Amount(0);
         public Tax Tax { get; set; }
         public Discount Discount { get; set; }
+        public Expenses Expenses { get; set; }
 
         public Product(string name, int upc, Amount amount)
         {
             this.Name = name;
             this.Upc = upc;
             this.Price = amount;
-
+            this.Expenses = new Expenses();
         }
 
 

@@ -14,7 +14,7 @@ namespace PriceCalculator
         }
 
         public override string ToString() =>
-            $"{this.Currency.CurrencySymbol}{Value:#.00}";
+            $"{this.Currency.CurrencySymbol}{Value:#0.00}";
 
     }
 }

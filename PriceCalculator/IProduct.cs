@@ -11,6 +11,8 @@
         Amount AddionalDiscount { get; set; } 
         Tax Tax { get; set; }
         Discount Discount { get; set; }
+        Expenses Expenses { get; set; }
+
 
     }
 }

@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="ApplyDiscount.cs" />
     <Compile Include="ApplyDiscountSelectiveProduct.cs" />
+    <Compile Include="ApplyExpenseOnProduct.cs" />
     <Compile Include="ApplyPrecedanceDiscountBeforTax.cs" />
     <Compile Include="ApplyTax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
